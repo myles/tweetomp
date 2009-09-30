@@ -1,0 +1,10 @@
+.DS_Store
+.Python
+*.tmproj
+bin/
+include/
+lib/
+*.pyc
+*.pyo
+docs/_build/
+
