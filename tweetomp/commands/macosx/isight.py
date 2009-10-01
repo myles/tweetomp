@@ -12,7 +12,7 @@ def enabled():
 	if not ok:
 		log.warn("You have to download the iSight Capture utility and put it in your PATH.")
 
-def run():
+def run(command, args):
 	timestamp = datetime.datetime.now().strftime('%Y-%m-%d-%H%M%S')
 	filename = u"%s/%s%s%s" % (tempfile.gettempdir(), 'grab_', timestamp, ".png")
 	subprocess.call('isightcapture -t png ' + filename, shell=True)

@@ -7,4 +7,5 @@ lib/
 *.pyc
 *.pyo
 docs/_build/
+test.cfg
 

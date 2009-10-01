@@ -158,7 +158,7 @@ html_static_path = ['_static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Tweetompdoc'
+htmlhelp_basename = 'tweetomp_doc'
 
 
 # -- Options for LaTeX output --------------------------------------------------

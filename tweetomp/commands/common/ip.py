@@ -17,11 +17,11 @@ def enabled():
 	
 	return ok
 
-def run():
+def run(command, args):
 	url = urllib2.urlopen("http://checkip.dyndns.com/")
 	html = url.read()
 	
 	ends_with = html.find("</body></html>")
 	starts_with = html.find("Current IP Address: ") + len("Current IP Address: ")
 	
-	return u"%s" % html[starts_with:ends_with].strip()
+	return u"my ip address is %s" % html[starts_with:ends_with].strip()
