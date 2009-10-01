@@ -49,37 +49,30 @@ class TweetBot(object):
 		return True, mod.run(command, args)
 
 from optparse import OptionParser
+import ConfigParser
 
 def main():
 	parser = OptionParser(usage='%prog [options]')
-	parser.add_option('-u', '--username',
+	parser.add_option('-c', '--config',
 		action = 'store',
-		dest = 'username',
-		help = 'Your computers Twitter username.')
-	parser.add_option('-p', '--password',
-		action = 'store',
-		dest = 'password',
-		help = 'Your computer Twitter password.')
-	parser.add_option('-v', '--verbosity', 
-		action='store', 
-		dest='verbosity', 
-		default='1',
-		type='choice', 
-		choices=['0', '1', '2'],
-		help='Verbosity level; 0=minimal output, 1=normal output, 2=all output')
+		dest = 'config_file',
+		help = 'Tweetomp configuration file.')
 	parser.set_defaults()
 	
 	options, args = parser.parse_args()
 	
+	config = ConfigParser.ConfigParser()
+	config.read(options.config_file)
+	
 	level = { '0': logging.WARN, '1': logging.INFO, '2': logging.DEBUG }
-	logging.basicConfig(level=level[options.verbosity], format="%(name)s: %(levelname)s: %(message)s")
+	logging.basicConfig(
+		level = level[config.get('tweetomp', 'verbosity')],
+		format="%(name)s: %(levelname)s: %(message)s")
 	
-	# TODO Currently hand coded but hopfully soon though a settings file.
-	COMMANDS = {
-		'ip': 'tweetomp.commands.common.ip',
-	}
-	
-	t = TweetBot(options.username, options.password, COMMANDS)
+	t = TweetBot(
+		username = config.get('twitter', 'username'),
+		password = config.get('twitter', 'password'),
+		commands = dict(config.items('commands')))
 	t.get_directs()
 
 if __name__ == '__main__':
