@@ -22,11 +22,11 @@ try:
 	f = open( "/proc/uptime" )
 	uptime_file = f.read().split()
 	f.close()
-except:
+except IOError:
 	uptime_file = None
 
 def enabled():
-	ok = uptime_file is None
+	ok = uptime_file is not None
 	if not ok:
 		log.warn("Cannot open uptime file: /proc/uptime.")
 	
