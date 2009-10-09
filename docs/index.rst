@@ -1,8 +1,7 @@
 Tweetomp
 ========
 
-A bot for interacting with your computer using Twitter_ direct and
-reply tweets.
+A bot for interacting with your computer using Twitter_ direct tweets.
 
 Contents
 --------
@@ -10,7 +9,8 @@ Contents
 .. toctree::
 	:maxdepth: 2
 	
-	api/index
+	api
+	install
 
 Indices and tables
 ------------------

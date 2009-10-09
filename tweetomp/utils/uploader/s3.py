@@ -1,4 +1,18 @@
-"""Uploads a file to Amazon's S3 service."""
+"""
+Copyright 2009 Myles Braithwaite <me@mylesbraithwaite.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 
 import logging
 import os.path
@@ -22,6 +36,8 @@ def enabled():
 	ok = settings.AWS_ACCESS_KEY and settings.AWS_SECRET_KEY and settings.AWS_S3_BUCKET is not None
 	if not ok:
 		log.warn("Please add the 'AWS_ACCESS_KEY', 'AWS_SECRET_KEY', and 'AWS_S3_BUCKET' to your settings file.")
+	
+	return ok
 
 def upload(filename):
 	conn = S3Connection(settings.AWS_ACCESS_KEY, settings.AWS_SECRET_KEY)

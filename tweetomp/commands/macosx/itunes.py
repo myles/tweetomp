@@ -17,25 +17,28 @@ limitations under the License.
 import logging
 
 try:
-	import urllib2
+	from Foundation import *
+	from ScriptingBridge import *
+	import objc
 except ImportError:
-	urllib2 = None
+	objc = None
 
-log = logging.getLogger("tweetcomp.commands.common.ip")
+log = logging.getLogger("tweetcomp.commands.macosx.itunes")
 
 def enabled():
-	ok = urllib2 is not None
-	# TODO Add a check to see if their is an internet connection out.
+	ok = objc is not None
 	if not ok:
-		log.warn("The library urllib2 is not installed.")
+		log.warn("The PyObjC library is not installed.")
 	
 	return ok
 
 def run(command, args):
-	url = urllib2.urlopen("http://checkip.dyndns.com/")
-	html = url.read()
+	iTunes = SBApplication.applicationWithBundleIdentifier_("com.apple.iTunes")
 	
-	ends_with = html.find("</body></html>")
-	starts_with = html.find("Current IP Address: ") + len("Current IP Address: ")
+	if not iTunes.isRunning():
+		return "my iTunes is not running."
 	
-	return u"my ip address is %s" % html[starts_with:ends_with].strip()
+	try:
+		return u"my iTunes is currently playing: %s by %s" % (iTunes.currentTrack().name(), iTunes.currentTrack().artist())
+	except objc.error:
+		return "my iTunes is open but nothing is playing."
