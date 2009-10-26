@@ -10,4 +10,5 @@ docs/_build/
 test.cfg
 dist/
 *.egg-info/
+tweetomp.log
 

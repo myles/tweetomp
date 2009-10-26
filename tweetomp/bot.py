@@ -18,7 +18,9 @@ import logging
 
 import twitter
 
-from tweetomp import __project_name__, __project_version__, __project_url__
+__project_name__ = "Tweetomp"
+__project_version__ = "0.1"
+__project_url__ = "http://github.com/myles/tweetomp"
 
 log = logging.getLogger('tweetomp.bot')
 
@@ -32,7 +34,9 @@ class TweetBot(object):
 		self.api.SetXTwitterHeaders(__project_name__, __project_version__, __project_url__)
 	
 	def get_directs(self):
+		log.debug("Checking for direct messages.")
 		self.tweets = self.api.GetDirectMessages()
+		log.debug("Got %s direct messages." % len(self.tweets))
 		
 		for tweet in self.tweets:
 			worked, reply = self.process(tweet.text.lower())
@@ -84,9 +88,16 @@ def main():
 	config.read(options.config_file)
 	
 	level = { '0': logging.WARN, '1': logging.INFO, '2': logging.DEBUG }
+	
+	try:
+		log_file = config.get('tweetomp', 'log_file')
+	except ConfigParser.NoOptionError:
+		log_file = None
+	
 	logging.basicConfig(
 		level = level[config.get('tweetomp', 'verbosity')],
-		format="%(name)s: %(levelname)s: %(message)s")
+		format="%(name)s: %(levelname)s: %(message)s",
+		filename=log_file)
 	
 	t = TweetBot(
 		username = config.get('twitter', 'username'),
