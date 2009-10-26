@@ -96,7 +96,7 @@ def main():
 	
 	logging.basicConfig(
 		level = level[config.get('tweetomp', 'verbosity')],
-		format="%Y-%m-%d %H:%M:%S %(name)s: %(levelname)s: %(message)s",
+		format="%(asctime)s: %(name)s: %(levelname)s: %(message)s",
 		filename=log_file)
 	
 	t = TweetBot(
