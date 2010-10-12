@@ -30,7 +30,7 @@ setup(
 	
 	install_requires = [
 		'setuptools',
-		'python-twitter',
+		'tweepy',
 	],
 	
 	entry_points = {

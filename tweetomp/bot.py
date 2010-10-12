@@ -14,9 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import sys
 import logging
+import ConfigParser
+from optparse import OptionParser
 
-import twitter
+import tweepy
 
 __project_name__ = "Tweetomp"
 __project_version__ = "0.1"
@@ -25,27 +28,26 @@ __project_url__ = "http://github.com/myles/tweetomp"
 log = logging.getLogger('tweetomp.bot')
 
 class TweetBot(object):
-	def __init__(self, username, password, commands):
-		self.username = username
-		self.password = password
+	def __init__(self, consumer_key, consumer_secret, access_key, access_secret, commands):
 		self.commands = commands
 		
-		self.api = twitter.Api(self.username, self.password)
-		self.api.SetXTwitterHeaders(__project_name__, __project_version__, __project_url__)
+		self.auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+		self.auth.set_access_token(access_key, access_secret)
+		self.api = tweepy.API(self.auth)
 	
 	def get_directs(self):
 		log.debug("Checking for direct messages.")
-		self.tweets = self.api.GetDirectMessages()
+		self.tweets = self.api.direct_messages()
 		log.debug("Got %s direct messages." % len(self.tweets))
 		
 		for tweet in self.tweets:
 			worked, reply = self.process(tweet.text.lower())
 			if worked:
 				update = "@%s %s" % (tweet.sender_screen_name, reply)
-				self.api.PostUpdate(update)
-				logging.info("Posted update: %s" % update)				
+				self.api.update_status(update)
+				log.info("Posted update: %s" % update)				
 			
-			self.api.DestroyDirectMessage(tweet.id)
+			self.api.destroy_direct_message(tweet.id)
 	
 	def process(self, tweet):
 		try:
@@ -70,9 +72,6 @@ class TweetBot(object):
 			return False, "Module couldn't be enabled."
 		
 		return True, mod.run(command, args)
-
-from optparse import OptionParser
-import ConfigParser
 
 def main():
 	parser = OptionParser(usage='%prog [options]')
@@ -99,9 +98,32 @@ def main():
 		format="%(asctime)s: %(name)s: %(levelname)s: %(message)s",
 		filename=log_file)
 	
+	twitter_consumer_key = config.get('twitter', 'consumer_key', None)
+	twitter_consumer_secret = config.get('twitter', 'consumer_secret', None)
+	
+	if not twitter_consumer_key and not twitter_consumer_secret:
+		print "Please register this application at <http://twitter.com/oauth_clients>."
+		print "Then fill in the information in the configuration file."
+		return sys.exit()
+	
+	twitter_access_key = config.get('twitter', 'access_key', None)
+	twitter_access_secret = config.get('twitter', 'access_secret', None)
+	
+	if not twitter_access_key and not twitter_access_secret:
+		auth = tweepy.OAuthHandler(twitter_consumer_key, twitter_consumer_secret)
+		auth_url = auth.get_authorization_url()
+		print 'Please authorize: %s' % auth_url
+		verifier = raw_input('PIN: ').strip()
+		auth.get_access_token(verifier)
+		print "access_key = %s" % auth.access_token.key
+		print "access_secret = %s" % auth.access_token.secret
+		return sys.exit()
+	
 	t = TweetBot(
-		username = config.get('twitter', 'username'),
-		password = config.get('twitter', 'password'),
+		twitter_consumer_key,
+		twitter_consumer_secret,
+		twitter_access_key,
+		twitter_access_secret,
 		commands = dict(config.items('commands')))
 	t.get_directs()
 

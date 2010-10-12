@@ -1,0 +1,15 @@
+syntax: glob
+.DS_Store
+.Python
+*.tmproj
+bin/
+include/
+lib/
+*.pyc
+*.pyo
+docs/_build/
+test.cfg
+dist/
+*.egg-info/
+tweetomp.log
+
